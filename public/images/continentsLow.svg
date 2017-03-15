@@ -11,7 +11,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
-   id="svg2"
+   id="map"
    inkscape:version="0.91 r13725"
    sodipodi:docname="continentsLow.svg">
   <metadata
@@ -69,8 +69,7 @@
     <!--{id:"southAmerica"},{id:"northAmerica"},{id:"asia"},{id:"europe"},{id:"australia"},{id:"africa"}-->
   </defs>
   <g
-     id="g8"
-     transform="translate(-779.96021,-302.12744)">
+     id="g8">
     <path
        id="asia"
        title="Asia"
