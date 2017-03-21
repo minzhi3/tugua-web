@@ -13,7 +13,7 @@ function remove(element) {
   var dfd = $.Deferred();
   var currentY = element.getBBox().y;
   element.animate({
-    "y": currentY - 1000,
+    //"y": currentY - 1000,
     "opacity": 0
   }, 500, function () {
     element.remove();
@@ -22,17 +22,38 @@ function remove(element) {
   return dfd.promise();
 }
 
-function showArrowNextPage(snap, callback) {
-  var arrow = snap.image("/images/icon_bounce_arrow_100.gif", 155, 590, 50, 50);
+function showArrowNextPage(snap, time, callback) {
+  var triangle = snap.polyline([10, 0, -5, 8.66, -5, -8.66]).attr({
+    "opacity": 0
+  });
+  var circle = snap.circle(0, 0, 20).attr({
+    "fill-opacity": "0",
+    "stroke-opacity": "1",
+    "stroke-width": "5",
+    "stroke": "black",
+    "stroke-dasharray":"126",
+    "stroke-dashoffset":"126",
+    "transform": "r270"
+  });
+  var group = snap.group(triangle, circle).attr({
+    "transform": "t320,590",
+  });
   var touched = false;
   var nextPage = function () {
     if (touched) return;
     touched = true;
-    snap.untouchmove(nextPage);
-    remove(arrow).done(callback);
+    group.untouchend(nextPage);
+    remove(group).done(callback);
   };
-  //g.touchmove(nextPage);
-  snap.touchmove(nextPage);
+  circle.animate({
+    "stroke-dashoffset":"0"
+  }, time, function (){
+    triangle.attr({
+      "opacity": 1
+    });
+    group.touchend(nextPage);
+  });
+  //circle.click(nextPage);
 }
 
 Animator.prototype.page1 = function () {
@@ -42,25 +63,19 @@ Animator.prototype.page1 = function () {
     "text-anchor": "middle",
     "opacity": 0
   });
+
   text.animate({
     "opacity": 1
   }, 1000, function () {
-    var arrow = self.s.image("/images/icon_bounce_arrow_100.gif", self.screenWidth / 2 - 25, self.screenHeight - 50, 50, 50);
-    var touched = false;
-    var nextPage = function () {
-      if (touched) return;
-      touched = true;
-      self.s.untouchmove(nextPage);
+    showArrowNextPage(self.s, 10, function (){
       $.when(
-        remove(text),
-        remove(arrow)
+        remove(text)
       ).done(
         function () {
           self.page2();
         }
         );
-    };
-    self.s.touchmove(nextPage);
+    });
   });
 };
 
@@ -83,14 +98,13 @@ Animator.prototype.page2 = function () {
       "opacity": 1
     }).animate({
       "transform": "t0,0"
-    }, 500, mina.bounce, function () {
-      showArrowNextPage(self.s, function () {
-        self.page3();
-      });
-    });
+    }, 500, mina.bounce);
   };
 
   Snap.load("/images/continentsLow.svg", function (fragment) {
+    showArrowNextPage(self.s, 2500, function () {
+      self.page3();
+    });
     mapG.append(fragment.select("#g8").attr({ transform: "t-600,-50" }));
     mapG.animate({
       transform: "t-1000,-200s10,10",
@@ -114,11 +128,9 @@ Animator.prototype.page3 = function () {
     "y": 470
   }, 1000, mina.backin);
 
-  setTimeout(function () {
-    showArrowNextPage(self.s, function () {
-      self.page4();
-    });
-  }, 2000);
+  showArrowNextPage(self.s, 2000, function () {
+    self.page4();
+  });
 
 };
 
@@ -158,11 +170,9 @@ Animator.prototype.page4 = function () {
     }, 2500);
   });
 
-  setTimeout(function () {
-    showArrowNextPage(self.s, function () {
-      self.page5();
-    });
-  }, 5500);
+  showArrowNextPage(self.s, 5500, function () {
+    self.page5();
+  });
 
 };
 
@@ -188,11 +198,9 @@ Animator.prototype.page5 = function () {
     "y": 320
   }, 2000, mina.backin);
 
-  setTimeout(function () {
-    showArrowNextPage(self.s, function () {
-      self.page6();
-    });
-  }, 2000);
+  showArrowNextPage(self.s, 2000, function () {
+    self.page6();
+  });
 
 };
 
