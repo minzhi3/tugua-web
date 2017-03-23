@@ -26,32 +26,33 @@ function showArrowNextPage(snap, time, callback) {
   var triangle = snap.polyline([10, 0, -5, 8.66, -5, -8.66]).attr({
     "opacity": 0
   });
-  var circle = snap.circle(0, 0, 20).attr({
+  var circle = snap.path("M0,-20A20,20 0 0,1 0,20A20,20 0 0,1 0,-20z").attr({
     "fill-opacity": "0",
     "stroke-opacity": "1",
     "stroke-width": "5",
     "stroke": "black",
-    "stroke-dasharray":"126",
-    "stroke-dashoffset":"126",
-    "transform": "r270"
+    "stroke-dasharray":"126px",
+    "stroke-dashoffset":"126px"
   });
   var group = snap.group(triangle, circle).attr({
-    "transform": "t320,590",
+    "transform": "t320,590"
   });
   var touched = false;
   var nextPage = function () {
     if (touched) return;
     touched = true;
     group.untouchend(nextPage);
+    //group.unclick(nextPage);
     remove(group).done(callback);
   };
   circle.animate({
-    "stroke-dashoffset":"0"
+    "stroke-dashoffset":"0px"
   }, time, function (){
     triangle.attr({
       "opacity": 1
     });
     group.touchend(nextPage);
+    //group.click(nextPage);
   });
   //circle.click(nextPage);
 }
