@@ -8,7 +8,11 @@ function Animator() {
   this.screenWidth = 360;
   this.screenHeight = 640;
   this.prefix = "/images/thumbs/";
-  this.imageName = [
+  this.imageName = new ImageName();
+}
+
+function ImageName() {
+  this.P11 = [
     "01.jpg",
     "02.jpg",
     "03.jpg",
@@ -20,20 +24,82 @@ function Animator() {
     "09.jpg",
     "10.jpg"
   ];
+  this.P12 = [
+    "11.jpg",
+    "12.jpg",
+    "13.jpg",
+    "14.jpg",
+    "15.jpg",
+    "16.jpg",
+    "17.jpg",
+    "18.jpg",
+    "19.jpg",
+    "20.jpg"
+  ];
+  this.P21 = [
+    "21.jpg",
+    "22.jpg",
+    "23.jpg",
+    "24.jpg",
+    "25.jpg",
+    "26.jpg",
+    "27.jpg",
+    "28.jpg",
+    "29.jpg",
+    "30.jpg"
+  ];
+  this.P22 = [
+    "31.jpg",
+    "32.jpg",
+    "33.jpg",
+    "34.jpg",
+    "35.jpg",
+    "36.jpg",
+    "37.jpg",
+    "01.jpg",
+    "02.jpg",
+    "03.jpg"
+  ];
+  this.P31 = [
+    "01.jpg",
+    "02.jpg",
+    "03.jpg",
+    "04.jpg",
+    "05.jpg",
+    "06.jpg",
+    "07.jpg",
+    "08.jpg",
+    "09.jpg",
+    "10.jpg"
+  ];
+  this.P32 = [
+    "11.jpg",
+    "12.jpg",
+    "13.jpg",
+    "14.jpg",
+    "15.jpg",
+    "16.jpg",
+    "17.jpg",
+    "18.jpg",
+    "19.jpg",
+    "20.jpg"
+  ];
 }
-
-
-Animator.prototype.drawPhoto = function (x, y, width, height){
+Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
   var self = this;
-  var g = self.s.group().attr({
-    "id": "photo"
-  });
+  var g = self.s.select("#photo")
+  if (!g) {
+    g = self.s.group().attr({
+      "id": "photo"
+    });
+  }
 
-  function showPhotoIndex(index){
-    if (index == self.imageName.length)
+
+  function showPhotoIndex(index) {
+    if (index == imageName.length)
       return
-    else{
-      var imageSource = self.prefix + self.imageName[index];
+    else {
+      var imageSource = self.prefix + imageName[index];
       var ix = Math.random() * width + x;
       var iy = Math.random() * height + y;
       var angel = Math.random() * 30 - 15;
@@ -45,7 +111,7 @@ Animator.prototype.drawPhoto = function (x, y, width, height){
         "opacity": 1
       }, 1000);
     }
-    setTimeout(function (){
+    setTimeout(function () {
       showPhotoIndex(index + 1)
     }, 300);
   }
@@ -54,9 +120,9 @@ Animator.prototype.drawPhoto = function (x, y, width, height){
 
 function remove(element) {
   var dfd = $.Deferred();
-  if (!element){
+  if (!element) {
     dfd.resolve();
-  }else{
+  } else {
     var currentY = element.getBBox().y;
     element.animate({
       //"y": currentY - 1000,
@@ -79,8 +145,8 @@ function showArrowNextPage(snap, time, callback) {
     "stroke-opacity": "1",
     "stroke-width": "5",
     "stroke": "black",
-    "stroke-dasharray":"126px",
-    "stroke-dashoffset":"126px"
+    "stroke-dasharray": "126px",
+    "stroke-dashoffset": "126px"
   });
   var group = snap.group(triangle, circle).attr({
     "transform": "t320,590"
@@ -88,19 +154,19 @@ function showArrowNextPage(snap, time, callback) {
   var touched = false;
   var nextPage = function () {
     var photo = snap.select("#photo");
-    
+
     console.log(photo);
     if (touched) return;
     touched = true;
     group.untouchend(nextPage);
     //group.unclick(nextPage);
     $.when(
-      remove(photo),remove(group)
+      remove(photo), remove(group)
     ).done(callback);
   };
   circle.animate({
-    "stroke-dashoffset":"0px"
-  }, time, function (){
+    "stroke-dashoffset": "0px"
+  }, time, function () {
     triangle.attr({
       "opacity": 1
     });
@@ -120,7 +186,7 @@ Animator.prototype.page1 = function () {
   text.animate({
     "opacity": 1
   }, 1000, function () {
-    showArrowNextPage(self.s, 10, function (){
+    showArrowNextPage(self.s, 10, function () {
       $.when(
         remove(text)
       ).done(
@@ -139,8 +205,9 @@ Animator.prototype.page2 = function () {
     "id": "map"
   });
 
-  var drawPhoto = function (){
-    self.drawPhoto(100, 80, 150, 150);
+  var drawPhoto = function () {
+    self.drawPhoto(self.imageName.P11, 100, 80, 150, 150);
+    self.drawPhoto(self.imageName.P12, 110, 390, 150, 150);
   }
   var showRole = function () {
     var paper = self.s.paper;
@@ -161,7 +228,7 @@ Animator.prototype.page2 = function () {
     showArrowNextPage(self.s, 6500, function () {
       self.page3();
     });
-    
+
     mapG.append(fragment.select("#g8").attr({ transform: "t-600,-50" }));
     mapG.animate({
       transform: "t-1000,-200s10,10",
@@ -176,8 +243,9 @@ Animator.prototype.page3 = function () {
   var tu = self.s.select("#tuFace");
   var gua = self.s.select("#guaFace");
 
-  var drawPhoto = function (){
-    self.drawPhoto(10, 10, 100, 170);
+  var drawPhoto = function () {
+    self.drawPhoto(self.imageName.P21, 10, 80, 150, 150);
+    self.drawPhoto(self.imageName.P22, 20, 390, 150, 150);
   }
   tu.animate({
     "x": 190,
@@ -211,12 +279,15 @@ Animator.prototype.page4 = function () {
     "x": 285,
     "y": 375
   }, 2000, mina.backin, function () {
-    self.drawPhoto(10, 10, 100, 170);
+    self.drawPhoto(self.imageName.P31, 20, 90, 150, 150);
     setTimeout(function () {
       tu.animate({
         "x": 265,
         "y": 500
       }, 1000);
+      
+      console.log("photo 2");
+      self.drawPhoto(self.imageName.P32, 20, 290, 150, 150);
     }, 3000);
   });
 
