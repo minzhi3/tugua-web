@@ -7,18 +7,66 @@ function Animator() {
   this.s = Snap("#svg");
   this.screenWidth = 360;
   this.screenHeight = 640;
+  this.prefix = "/images/thumbs/";
+  this.imageName = [
+    "01.jpg",
+    "02.jpg",
+    "03.jpg",
+    "04.jpg",
+    "05.jpg",
+    "06.jpg",
+    "07.jpg",
+    "08.jpg",
+    "09.jpg",
+    "10.jpg"
+  ];
+}
+
+
+Animator.prototype.drawPhoto = function (x, y, width, height){
+  var self = this;
+  var g = self.s.group().attr({
+    "id": "photo"
+  });
+
+  function showPhotoIndex(index){
+    if (index == self.imageName.length)
+      return
+    else{
+      var imageSource = self.prefix + self.imageName[index];
+      var ix = Math.random() * width + x;
+      var iy = Math.random() * height + y;
+      var angel = Math.random() * 30 - 15;
+      var image = g.image(imageSource, ix, iy, 75, 75).attr({
+        "opacity": 0,
+        "transform": "r" + angel
+      });
+      image.animate({
+        "opacity": 1
+      }, 1000);
+    }
+    setTimeout(function (){
+      showPhotoIndex(index + 1)
+    }, 300);
+  }
+  showPhotoIndex(0);
 }
 
 function remove(element) {
   var dfd = $.Deferred();
-  var currentY = element.getBBox().y;
-  element.animate({
-    //"y": currentY - 1000,
-    "opacity": 0
-  }, 500, function () {
-    element.remove();
+  if (!element){
     dfd.resolve();
-  });
+  }else{
+    var currentY = element.getBBox().y;
+    element.animate({
+      //"y": currentY - 1000,
+      "opacity": 0
+    }, 500, function () {
+      element.remove();
+      dfd.resolve();
+    });
+  }
+
   return dfd.promise();
 }
 
@@ -39,11 +87,16 @@ function showArrowNextPage(snap, time, callback) {
   });
   var touched = false;
   var nextPage = function () {
+    var photo = snap.select("#photo");
+    
+    console.log(photo);
     if (touched) return;
     touched = true;
     group.untouchend(nextPage);
     //group.unclick(nextPage);
-    remove(group).done(callback);
+    $.when(
+      remove(photo),remove(group)
+    ).done(callback);
   };
   circle.animate({
     "stroke-dashoffset":"0px"
@@ -64,7 +117,6 @@ Animator.prototype.page1 = function () {
     "text-anchor": "middle",
     "opacity": 0
   });
-
   text.animate({
     "opacity": 1
   }, 1000, function () {
@@ -87,6 +139,9 @@ Animator.prototype.page2 = function () {
     "id": "map"
   });
 
+  var drawPhoto = function (){
+    self.drawPhoto(100, 80, 150, 150);
+  }
   var showRole = function () {
     var paper = self.s.paper;
     var tu = paper.text(90, 90, "🐰").attr({ "font-size": "36", "id": "tuFace" });
@@ -99,13 +154,14 @@ Animator.prototype.page2 = function () {
       "opacity": 1
     }).animate({
       "transform": "t0,0"
-    }, 500, mina.bounce);
+    }, 500, mina.bounce, drawPhoto);
   };
 
   Snap.load("/images/continentsLow.svg", function (fragment) {
-    showArrowNextPage(self.s, 2500, function () {
+    showArrowNextPage(self.s, 6500, function () {
       self.page3();
     });
+    
     mapG.append(fragment.select("#g8").attr({ transform: "t-600,-50" }));
     mapG.animate({
       transform: "t-1000,-200s10,10",
@@ -119,10 +175,14 @@ Animator.prototype.page3 = function () {
 
   var tu = self.s.select("#tuFace");
   var gua = self.s.select("#guaFace");
+
+  var drawPhoto = function (){
+    self.drawPhoto(10, 10, 100, 170);
+  }
   tu.animate({
     "x": 190,
     "y": 170
-  }, 2000, mina.backin);
+  }, 2000, mina.backin, drawPhoto);
 
   gua.animate({
     "x": 160,
@@ -151,6 +211,7 @@ Animator.prototype.page4 = function () {
     "x": 285,
     "y": 375
   }, 2000, mina.backin, function () {
+    self.drawPhoto(10, 10, 100, 170);
     setTimeout(function () {
       tu.animate({
         "x": 265,
