@@ -149,11 +149,12 @@ function showArrowNextPage(snap, time, callback) {
     "stroke-dashoffset": "126px"
   });
   var group = snap.group(triangle, circle).attr({
-    "transform": "t320,590"
+    "transform": "t320,610"
   });
   var touched = false;
   var nextPage = function () {
     var photo = snap.select("#photo");
+    var text = snap.select("#text");
 
     console.log(photo);
     if (touched) return;
@@ -161,7 +162,7 @@ function showArrowNextPage(snap, time, callback) {
     group.untouchend(nextPage);
     //group.unclick(nextPage);
     $.when(
-      remove(photo), remove(group)
+      remove(photo), remove(group), remove(text)
     ).done(callback);
   };
   circle.animate({
@@ -178,16 +179,27 @@ function showArrowNextPage(snap, time, callback) {
 
 Animator.prototype.page1 = function () {
   var self = this;
-  var text = self.s.text(self.screenWidth / 2, self.screenHeight / 2, 'Start').attr({
-    "font-size": "36",
-    "text-anchor": "middle",
-    "opacity": 0
-  });
-  text.animate({
+  var image = self.s.image("images/cover.jpg", 0, 184, 360, 415);
+  var textG = self.s.group().attr({ "opacity": 0 });
+  textG.image("images/ring.png", 50, 0, 262, 268);
+  textG.image("images/name1.png", 135, 100, 90, 20);
+  textG.image("images/name2.png", 135, 160, 90, 20);
+  textG.image("images/diamond.png", 170, 130, 20, 20);
+  textG.image("images/time.png", 85, 300, 200, 20);
+
+  textG.image("images/line.png", 85, 330, 200, 20);
+  textG.image("images/place.png", 55, 360, 250, 50);
+  textG.animate({
     "opacity": 1
   }, 1000, function () {
+    var text = self.s.text(200, 620, '点这里是我们的故事').attr({
+      "font-size": "20",
+      "text-anchor": "middle"
+    })
     showArrowNextPage(self.s, 10, function () {
       $.when(
+        remove(textG),
+        remove(image),
         remove(text)
       ).done(
         function () {
@@ -205,9 +217,19 @@ Animator.prototype.page2 = function () {
     "id": "map"
   });
 
+  var text = self.s.paper.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
+    .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
+
+  text.selectAll("tspan").forEach(function (tspan, i) {
+    tspan.attr({ x: 20, y: 550 + 25 * (i + 1) });
+  });
+
   var drawPhoto = function () {
-    self.drawPhoto(self.imageName.P11, 100, 80, 150, 150);
-    self.drawPhoto(self.imageName.P12, 110, 390, 150, 150);
+    self.drawPhoto(self.imageName.P11, 130, 60, 150, 150);
+    self.drawPhoto(self.imageName.P12, 140, 350, 150, 150);
+    text.animate({
+      "opacity": 1
+    }, 1000)
   }
   var showRole = function () {
     var paper = self.s.paper;
@@ -223,6 +245,8 @@ Animator.prototype.page2 = function () {
       "transform": "t0,0"
     }, 500, mina.bounce, drawPhoto);
   };
+
+
 
   Snap.load("/images/continentsLow.svg", function (fragment) {
     showArrowNextPage(self.s, 6500, function () {
@@ -243,9 +267,19 @@ Animator.prototype.page3 = function () {
   var tu = self.s.select("#tuFace");
   var gua = self.s.select("#guaFace");
 
+  var text = self.s.paper.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
+    .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
+
+  text.selectAll("tspan").forEach(function (tspan, i) {
+    tspan.attr({ x: 20, y: 550 + 25 * (i + 1) });
+  });
+
   var drawPhoto = function () {
     self.drawPhoto(self.imageName.P21, 10, 80, 150, 150);
     self.drawPhoto(self.imageName.P22, 20, 390, 150, 150);
+    text.animate({
+      "opacity": 1
+    }, 1000)
   }
   tu.animate({
     "x": 190,
@@ -271,6 +305,13 @@ Animator.prototype.page4 = function () {
   var gua = self.s.select("#guaFace");
   var map = self.s.select("#map");
 
+  var text = self.s.paper.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
+    .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
+
+  text.selectAll("tspan").forEach(function (tspan, i) {
+    tspan.attr({ x: 20, y: 550 + 25 * (i + 1) });
+  });
+
   map.animate({
     transform: "matrix(10,0,0,10,-2400,-2589.5698)",
   }, 2000);
@@ -285,9 +326,11 @@ Animator.prototype.page4 = function () {
         "x": 265,
         "y": 500
       }, 1000);
-      
-      console.log("photo 2");
+
       self.drawPhoto(self.imageName.P32, 20, 290, 150, 150);
+      text.animate({
+        "opacity": 1
+      }, 1000)
     }, 3000);
   });
 
@@ -317,6 +360,14 @@ Animator.prototype.page5 = function () {
   var gua = self.s.select("#guaFace");
   var map = self.s.select("#map");
 
+  var textG = self.s.group().attr({ "id": "text" });
+  var text = textG.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
+    .attr({ fill: "black", fontSize: "16px", "opacity": 0 });
+
+  text.selectAll("tspan").forEach(function (tspan, i) {
+    tspan.attr({ x: 120, y: 350 + 25 * (i + 1) });
+  });
+
   map.animate({
     transform: "matrix(11,0,0,11,-2169,-3289.5698)",
   }, 2000);
@@ -331,19 +382,25 @@ Animator.prototype.page5 = function () {
     "y": 320
   }, 2000, mina.backin);
 
+  setTimeout(function () {
+    text.animate({
+      "opacity": 1
+    }, 1000)
+    textG.text(250, 620, '回到首页').attr({
+      "font-size": "20",
+      "text-anchor": "middle"
+    })
+  }, 2000);
+
   showArrowNextPage(self.s, 2000, function () {
-    self.page6();
+    self.replay();
   });
 
 };
 
-Animator.prototype.page6 = function () {
+Animator.prototype.replay = function () {
   var self = this;
-  var text = self.s.text(self.screenWidth / 2, self.screenHeight / 2, 'Finish').attr({
-    "font-size": "36",
-    "text-anchor": "middle",
-    "opacity": 0
-  });
+
   var faces = self.s.select("#tuFace").parent();
   var map = self.s.select("#map");
 
@@ -352,11 +409,7 @@ Animator.prototype.page6 = function () {
     remove(map)
   ).done(
     function () {
-      text.animate({
-        "opacity": 1
-      }, 1000, function () {
-        //var arrow = self.s.image("/images/icon_bounce_arrow_100.gif", self.screenWidth/2-25, self.screenHeight-50, 50, 50);
-      });
+      self.page1();
     }
     );
 
