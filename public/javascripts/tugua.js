@@ -1,4 +1,7 @@
 $(document).ready(function () {
+  document.body.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+  }, false); 
   var animator = new Animator();
   animator.page1();
 });
@@ -93,7 +96,7 @@ Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
       "id": "photo"
     });
   }
-
+  var gClick = self.s.select("#photoClick")
 
   function showPhotoIndex(index) {
     if (index == imageName.length)
@@ -102,6 +105,7 @@ Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
       var imageSource = self.prefix + imageName[index];
       var ix = Math.random() * width + x;
       var iy = Math.random() * height + y;
+      var deltaXY = 112.5
       var angel = Math.random() * 30 - 15;
       var image = g.image(imageSource, ix, iy, 75, 75).attr({
         "opacity": 0,
@@ -110,6 +114,34 @@ Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
       image.animate({
         "opacity": 1
       }, 1000);
+      image.drag(function (dx, dy, x, y){
+        this.attr({
+          "x": x - deltaXY,
+          "y": y - deltaXY
+        })
+      },function (x,y){
+        this.animate({
+          "x": x - deltaXY,
+          "y": y - deltaXY,
+          "width": 225,
+          "height": 225,
+          "transform": "r0"
+        }, 200)
+        this.appendTo(g);
+      },function (event){
+        var that = this;
+        setTimeout(function (){
+          that.animate({
+            "x": event.changedTouches[0].clientX - deltaXY / 4,
+            "y": event.changedTouches[0].clientY - deltaXY / 4,
+            "width": 75,
+            "height": 75,
+            "transform": "r" + angel
+          }, 1000)
+        }, 1000);
+
+      }
+      );
     }
     setTimeout(function () {
       showPhotoIndex(index + 1)
