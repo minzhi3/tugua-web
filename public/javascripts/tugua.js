@@ -3,8 +3,21 @@ $(document).ready(function () {
     event.preventDefault();
   }, false); 
   var animator = new Animator();
+  animator.imageName.preload();
   animator.page1();
 });
+
+function ImageToBase64(img, mime_type) {
+    // New Canvas
+    var canvas = document.createElement('canvas');
+    canvas.width  = img.width;
+    canvas.height = img.height;
+    // Draw Image
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    // To Base64
+    return canvas.toDataURL(mime_type);
+}
 
 function Animator() {
   this.s = Snap("#svg");
@@ -15,7 +28,8 @@ function Animator() {
 }
 
 function ImageName() {
-  this.P11 = [
+  //Page 1 Tu
+  this.N11 = [
     "01.jpg",
     "02.jpg",
     "03.jpg",
@@ -27,7 +41,10 @@ function ImageName() {
     "09.jpg",
     "10.jpg"
   ];
-  this.P12 = [
+
+  this.P11 = [];
+  //Page 1 gua
+  this.N12 = [
     "11.jpg",
     "12.jpg",
     "13.jpg",
@@ -39,7 +56,10 @@ function ImageName() {
     "19.jpg",
     "20.jpg"
   ];
-  this.P21 = [
+  this.P12 = [];
+
+  //page 2 tu
+  this.N21 = [
     "21.jpg",
     "22.jpg",
     "23.jpg",
@@ -51,7 +71,9 @@ function ImageName() {
     "29.jpg",
     "30.jpg"
   ];
-  this.P22 = [
+  this.P21 = [];
+  //page 2 gua
+  this.N22 = [
     "31.jpg",
     "32.jpg",
     "33.jpg",
@@ -63,7 +85,9 @@ function ImageName() {
     "02.jpg",
     "03.jpg"
   ];
-  this.P31 = [
+  this.P22 = [];
+  //page 3 sendai
+  this.N31 = [
     "01.jpg",
     "02.jpg",
     "03.jpg",
@@ -75,7 +99,10 @@ function ImageName() {
     "09.jpg",
     "10.jpg"
   ];
-  this.P32 = [
+  this.P31 = [];
+
+  //page 3 tokyo
+  this.N32 = [
     "11.jpg",
     "12.jpg",
     "13.jpg",
@@ -87,27 +114,45 @@ function ImageName() {
     "19.jpg",
     "20.jpg"
   ];
+  this.P32 = [];
 }
-Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
+ImageName.prototype.preload = function (){
   var self = this;
-  var g = self.s.select("#photo")
+  function preloadArray(names, images){
+    for (var i=0;i<names.length;i++){
+      images[i] = new Image();
+      images[i].src = "/images/thumbs/" + names[i];
+    }
+  }
+  preloadArray(this.N11, this.P11);
+  preloadArray(this.N12, this.P12);
+  preloadArray(this.N21, this.P21);
+  preloadArray(this.N22, this.P22);
+  preloadArray(this.N31, this.P31);
+  preloadArray(this.N32, this.P32);
+};
+
+Animator.prototype.drawPhoto = function (images, x, y, width, height) {
+  var self = this;
+  var g = self.s.select("#photo");
   if (!g) {
     g = self.s.group().attr({
       "id": "photo"
     });
   }
-  var gClick = self.s.select("#photoClick")
+  var gClick = self.s.select("#photoClick");
 
   function showPhotoIndex(index) {
-    if (index == imageName.length)
-      return
+    if (index == images.length)
+      return;
     else {
-      var imageSource = self.prefix + imageName[index];
+      var imageSource = images[index];
       var ix = Math.random() * width + x;
       var iy = Math.random() * height + y;
-      var deltaXY = 112.5
+      var deltaXY = 112.5;
       var angel = Math.random() * 30 - 15;
-      var image = g.image(imageSource, ix, iy, 75, 75).attr({
+      var b64 = ImageToBase64(imageSource, "image/jpeg");
+      var image = g.image(b64, ix, iy, 75, 75).attr({
         "opacity": 0,
         "transform": "r" + angel
       });
@@ -118,7 +163,7 @@ Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
         this.attr({
           "x": x - deltaXY,
           "y": y - deltaXY
-        })
+        });
       },function (x,y){
         this.animate({
           "x": x - deltaXY,
@@ -126,7 +171,7 @@ Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
           "width": 225,
           "height": 225,
           "transform": "r0"
-        }, 200)
+        }, 200);
         this.appendTo(g);
       },function (event){
         var that = this;
@@ -137,18 +182,18 @@ Animator.prototype.drawPhoto = function (imageName, x, y, width, height) {
             "width": 75,
             "height": 75,
             "transform": "r" + angel
-          }, 1000)
+          }, 1000);
         }, 1000);
 
       }
       );
     }
     setTimeout(function () {
-      showPhotoIndex(index + 1)
+      showPhotoIndex(index + 1);
     }, 300);
   }
   showPhotoIndex(0);
-}
+};
 
 function remove(element) {
   var dfd = $.Deferred();
@@ -181,7 +226,7 @@ function showArrowNextPage(snap, time, callback) {
     "stroke-dashoffset": "126px"
   });
   var group = snap.group(triangle, circle).attr({
-    "transform": "t320,610"
+    "transform": "t320,560"
   });
   var touched = false;
   var nextPage = function () {
@@ -211,7 +256,7 @@ function showArrowNextPage(snap, time, callback) {
 
 Animator.prototype.page1 = function () {
   var self = this;
-  var image = self.s.image("images/cover.jpg", 0, 184, 360, 415);
+  var image = self.s.image("images/cover.jpg", 0, 144, 360, 415);
   var textG = self.s.group().attr({ "opacity": 0 });
   textG.image("images/ring.png", 50, 0, 262, 268);
   textG.image("images/name1.png", 135, 100, 90, 20);
@@ -224,10 +269,10 @@ Animator.prototype.page1 = function () {
   textG.animate({
     "opacity": 1
   }, 1000, function () {
-    var text = self.s.text(200, 620, '点这里是我们的故事').attr({
+    var text = self.s.text(200, 560, '点这里是我们的故事').attr({
       "font-size": "20",
       "text-anchor": "middle"
-    })
+    });
     showArrowNextPage(self.s, 10, function () {
       $.when(
         remove(textG),
@@ -261,8 +306,8 @@ Animator.prototype.page2 = function () {
     self.drawPhoto(self.imageName.P12, 140, 350, 150, 150);
     text.animate({
       "opacity": 1
-    }, 1000)
-  }
+    }, 1000);
+  };
   var showRole = function () {
     var paper = self.s.paper;
     var tu = paper.text(90, 90, "🐰").attr({ "font-size": "36", "id": "tuFace" });
@@ -311,8 +356,8 @@ Animator.prototype.page3 = function () {
     self.drawPhoto(self.imageName.P22, 20, 390, 150, 150);
     text.animate({
       "opacity": 1
-    }, 1000)
-  }
+    }, 1000);
+  };
   tu.animate({
     "x": 190,
     "y": 170
@@ -362,7 +407,7 @@ Animator.prototype.page4 = function () {
       self.drawPhoto(self.imageName.P32, 20, 290, 150, 150);
       text.animate({
         "opacity": 1
-      }, 1000)
+      }, 1000);
     }, 3000);
   });
 
@@ -417,11 +462,11 @@ Animator.prototype.page5 = function () {
   setTimeout(function () {
     text.animate({
       "opacity": 1
-    }, 1000)
+    }, 1000);
     textG.text(250, 620, '回到首页').attr({
       "font-size": "20",
       "text-anchor": "middle"
-    })
+    });
   }, 2000);
 
   showArrowNextPage(self.s, 2000, function () {
