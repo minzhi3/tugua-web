@@ -81,38 +81,38 @@ function ImageName() {
     "35.jpg",
     "36.jpg",
     "37.jpg",
-    "01.jpg",
-    "02.jpg",
-    "03.jpg"
+    "38.jpg",
+    "39.jpg",
+    "40.jpg"
   ];
   this.P22 = [];
   //page 3 sendai
   this.N31 = [
-    "01.jpg",
-    "02.jpg",
-    "03.jpg",
-    "04.jpg",
-    "05.jpg",
-    "06.jpg",
-    "07.jpg",
-    "08.jpg",
-    "09.jpg",
-    "10.jpg"
+    "41.jpg",
+    "42.jpg",
+    "43.jpg",
+    "44.jpg",
+    "45.jpg",
+    "46.jpg",
+    "47.jpg",
+    "48.jpg",
+    "49.jpg",
+    "50.jpg"
   ];
   this.P31 = [];
 
   //page 3 tokyo
   this.N32 = [
-    "11.jpg",
-    "12.jpg",
-    "13.jpg",
-    "14.jpg",
-    "15.jpg",
-    "16.jpg",
-    "17.jpg",
-    "18.jpg",
-    "19.jpg",
-    "20.jpg"
+    "51.jpg",
+    "52.jpg",
+    "53.jpg",
+    "54.jpg",
+    "55.jpg",
+    "56.jpg",
+    "57.jpg",
+    "58.jpg",
+    "59.jpg",
+    "60.jpg"
   ];
   this.P32 = [];
 }
@@ -132,7 +132,7 @@ ImageName.prototype.preload = function (){
   preloadArray(this.N32, this.P32);
 };
 
-Animator.prototype.drawPhoto = function (images, x, y, width, height) {
+Animator.prototype.drawPhoto = function (images, x, y) {
   var self = this;
   var g = self.s.select("#photo");
   if (!g) {
@@ -147,12 +147,16 @@ Animator.prototype.drawPhoto = function (images, x, y, width, height) {
       return;
     else {
       var imageSource = images[index];
+      var height = 80;
+      var iw = imageSource.width;
+      var ih = imageSource.height;
+      var width = 1.0 * iw * height / ih;
       var ix = Math.random() * width + x;
       var iy = Math.random() * height + y;
       var deltaXY = 112.5;
       var angel = Math.random() * 30 - 15;
       var b64 = ImageToBase64(imageSource, "image/jpeg");
-      var image = g.image(b64, ix, iy, 75, 75).attr({
+      var image = g.image(b64, ix, iy, width, height).attr({
         "opacity": 0,
         "transform": "r" + angel
       });
@@ -168,8 +172,8 @@ Animator.prototype.drawPhoto = function (images, x, y, width, height) {
         this.animate({
           "x": x - deltaXY,
           "y": y - deltaXY,
-          "width": 225,
-          "height": 225,
+          "width": width * 3,
+          "height": height * 3,
           "transform": "r0"
         }, 200);
         this.appendTo(g);
@@ -179,8 +183,8 @@ Animator.prototype.drawPhoto = function (images, x, y, width, height) {
           that.animate({
             "x": event.changedTouches[0].clientX - deltaXY / 4,
             "y": event.changedTouches[0].clientY - deltaXY / 4,
-            "width": 75,
-            "height": 75,
+            "width": width,
+            "height": height,
             "transform": "r" + angel
           }, 1000);
         }, 1000);
@@ -298,12 +302,12 @@ Animator.prototype.page2 = function () {
     .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
-    tspan.attr({ x: 20, y: 550 + 25 * (i + 1) });
+    tspan.attr({ x: 20, y: 500 + 25 * (i + 1) });
   });
 
   var drawPhoto = function () {
-    self.drawPhoto(self.imageName.P11, 130, 60, 150, 150);
-    self.drawPhoto(self.imageName.P12, 140, 350, 150, 150);
+    self.drawPhoto(self.imageName.P11, 130, 60);
+    self.drawPhoto(self.imageName.P12, 140, 350);
     text.animate({
       "opacity": 1
     }, 1000);
@@ -348,12 +352,12 @@ Animator.prototype.page3 = function () {
     .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
-    tspan.attr({ x: 20, y: 550 + 25 * (i + 1) });
+    tspan.attr({ x: 20, y: 500 + 25 * (i + 1) });
   });
 
   var drawPhoto = function () {
-    self.drawPhoto(self.imageName.P21, 10, 80, 150, 150);
-    self.drawPhoto(self.imageName.P22, 20, 390, 150, 150);
+    self.drawPhoto(self.imageName.P21, 10, 80);
+    self.drawPhoto(self.imageName.P22, 20, 390);
     text.animate({
       "opacity": 1
     }, 1000);
@@ -386,7 +390,7 @@ Animator.prototype.page4 = function () {
     .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
-    tspan.attr({ x: 20, y: 550 + 25 * (i + 1) });
+    tspan.attr({ x: 20, y: 500 + 25 * (i + 1) });
   });
 
   map.animate({
@@ -397,14 +401,14 @@ Animator.prototype.page4 = function () {
     "x": 285,
     "y": 375
   }, 2000, mina.backin, function () {
-    self.drawPhoto(self.imageName.P31, 20, 90, 150, 150);
+    self.drawPhoto(self.imageName.P31, 20, 90);
     setTimeout(function () {
       tu.animate({
         "x": 265,
         "y": 500
       }, 1000);
 
-      self.drawPhoto(self.imageName.P32, 20, 290, 150, 150);
+      self.drawPhoto(self.imageName.P32, 20, 290);
       text.animate({
         "opacity": 1
       }, 1000);
@@ -438,11 +442,15 @@ Animator.prototype.page5 = function () {
   var map = self.s.select("#map");
 
   var textG = self.s.group().attr({ "id": "text" });
-  var text = textG.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
-    .attr({ fill: "black", fontSize: "16px", "opacity": 0 });
+  var text = textG.text({ text: ["最后，我们郑重邀请您参加我们的婚礼", "感谢您的支持与鼓励", "点此关注我们的婚礼公共号"] })
+    .attr({ fill: "blue", fontSize: "16px", "opacity": 0 });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
-    tspan.attr({ x: 120, y: 350 + 25 * (i + 1) });
+    tspan.attr({ x: 50, y: 350 + 25 * (i + 1) });
+  });
+
+  text.touchstart(function (){
+    window.location.href = "http://mp.weixin.qq.com/s/Py11O4PZhogteG_Vk8QmyA";
   });
 
   map.animate({
