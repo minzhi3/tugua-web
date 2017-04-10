@@ -160,37 +160,39 @@ Animator.prototype.drawPhoto = function (images, x, y) {
         "opacity": 0,
         "transform": "r" + angel
       });
+      var dragG = g.group(image);
+      var matrixString = dragG.transform();
       image.animate({
         "opacity": 1
       }, 1000);
-      image.drag(function (dx, dy, x, y){
+      dragG.drag(function (dx, dy, x, y){
         this.attr({
-          "x": x - deltaXY,
-          "y": y - deltaXY
+          //"x": x - deltaXY,
+          //"y": y - deltaXY
+          "transform": matrixString + "t"+dx +","+dy
         });
       },function (x,y){
-        this.animate({
-          "x": x - deltaXY,
-          "y": y - deltaXY,
-          "width": width * 3,
-          "height": height * 3,
-          "transform": "r0"
+        var _image = this.select("image");
+        _image.stop();
+        _image.animate({
+          //"x": x - deltaXY,
+          //"y": y - deltaXY,
+          //"width": width * 3,
+          //"height": height * 3,
+          "transform": "s3r0"
         }, 200);
         this.appendTo(g);
       },function (event){
-        var that = this;
-        setTimeout(function (){
-          that.animate({
-            "x": event.changedTouches[0].clientX - deltaXY / 4,
-            "y": event.changedTouches[0].clientY - deltaXY / 4,
-            "width": width,
-            "height": height,
-            "transform": "r" + angel
-          }, 1000);
+        matrixString = this.transform();
+        var _image = this.select("image");
+        _image.animate({
+          //"x": event.changedTouches[0].clientX - deltaXY / 4,
+          //"y": event.changedTouches[0].clientY - deltaXY / 4,
+          //"width": width,
+          //"height": height,
+          "transform": "r" + angel
         }, 1000);
-
-      }
-      );
+      });
     }
     setTimeout(function () {
       showPhotoIndex(index + 1);
@@ -298,7 +300,7 @@ Animator.prototype.page2 = function () {
     "id": "map"
   });
 
-  var text = self.s.paper.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
+  var text = self.s.paper.text({ text: ["以前，", "我们在自己的小空间里，", "自由自在地生活着。"] })
     .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
@@ -348,7 +350,7 @@ Animator.prototype.page3 = function () {
   var tu = self.s.select("#tuFace");
   var gua = self.s.select("#guaFace");
 
-  var text = self.s.paper.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
+  var text = self.s.paper.text({ text: ["后来", "我们不约而同地想着，", "外面的世界是什么样的呢"] })
     .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
@@ -356,8 +358,8 @@ Animator.prototype.page3 = function () {
   });
 
   var drawPhoto = function () {
-    self.drawPhoto(self.imageName.P21, 10, 80);
-    self.drawPhoto(self.imageName.P22, 20, 390);
+    self.drawPhoto(self.imageName.P21, 10, 50);
+    self.drawPhoto(self.imageName.P22, 20, 250);
     text.animate({
       "opacity": 1
     }, 1000);
@@ -386,7 +388,7 @@ Animator.prototype.page4 = function () {
   var gua = self.s.select("#guaFace");
   var map = self.s.select("#map");
 
-  var text = self.s.paper.text({ text: ["啊啊啊啊", "啊啊啊啊啊啊", "啊啊啊啊啊啊啊"] })
+  var text = self.s.paper.text({ text: ["于是，", "命运让我们走到一起，", "直到遇见彼此。"] })
     .attr({ fill: "black", fontSize: "16px", "opacity": 0, "id": "text" });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
@@ -442,7 +444,8 @@ Animator.prototype.page5 = function () {
   var map = self.s.select("#map");
 
   var textG = self.s.group().attr({ "id": "text" });
-  var text = textG.text({ text: ["最后，我们郑重邀请您参加我们的婚礼", "感谢您的支持与鼓励", "点此关注我们的婚礼公共号"] })
+  var name = QueryString.name || "";
+  var text = textG.text({ text: ["今天，我们要结婚了", "", name,"点此关注我们的婚礼公共号"] })
     .attr({ fill: "blue", fontSize: "16px", "opacity": 0 });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
@@ -499,3 +502,26 @@ Animator.prototype.replay = function () {
     );
 
 };
+
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  } 
+  return query_string;
+}();
