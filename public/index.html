@@ -1,20 +1,22 @@
 <html>
-
-<head>
-  <title>index</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <!--<script src="/modules/jquery/jquery.min.js"></script>
-  <script src="/modules/snapsvg/snap.svg-min.js"></script>-->
-  <script src="/modules/jquery/jquery.js"></script>
-  <script src="/modules/snapsvg/snap.svg.js"></script>
-  <script src="/javascripts/tugua.js"></script>
-  <audio id="background_audio" autoplay="autoplay">
-    <source src="/bgm.mp3" type="audio/mpeg" />
-  </audio>
-</head>
-
-<body>
-  <svg id="svg" width="100%" viewBox="0 0 360 600" style="margin: auto;display: block;"></svg>
-</body>
-
+  <head>
+    <title>TuGua</title>
+    <script src="/modules/jquery/jquery.js"></script>
+  </head>
+  <body>
+    <p>链接生成</p>
+    <input type="text" name="" value=""/>
+    <p>链接：<a id="link" href=""></a></p>
+    
+    <script>
+      $(document).ready(function () {
+        $("input").on("input", function (){
+          var name = $(this).val();
+          var url = "/invite.html?name=" + name;
+          var text = "http://xn--4o8hpa.tk" + url;
+          $("#link").attr("href", url).text(text);
+        })
+      });
+    </script>
+  </body>
 </html>

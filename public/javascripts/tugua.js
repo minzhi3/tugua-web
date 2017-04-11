@@ -1,10 +1,11 @@
 $(document).ready(function () {
-  document.body.addEventListener('touchmove', function(event) {
-    event.preventDefault();
-  }, false); 
+  var name = QueryString.name || "";
+  if (name)
+  document.title = "婚礼请帖 to" + name;
   var animator = new Animator();
-  animator.imageName.preload();
-  animator.page1();
+  animator.imageName.preload(function (){
+    animator.page1();
+  });
 });
 
 function ImageToBase64(img, mime_type) {
@@ -24,10 +25,11 @@ function Animator() {
   this.screenWidth = 360;
   this.screenHeight = 640;
   this.prefix = "/images/thumbs/";
-  this.imageName = new ImageName();
+  this.imageName = new ImageName(this.s);
 }
 
-function ImageName() {
+function ImageName(snap) {
+  this.s = snap;
   //Page 1 Tu
   this.N11 = [
     "01.jpg",
@@ -115,21 +117,84 @@ function ImageName() {
     "60.jpg"
   ];
   this.P32 = [];
+
+  //cover
+  this.N0 = [
+    "../cover.jpg",
+    "../diamond.png",
+    "../line.png",
+    "../name1.png",
+    "../name2.png",
+    "../place.png",
+    "../ring.png",
+    "../time.png"
+  ];
+  this.P0 = [];
 }
-ImageName.prototype.preload = function (){
+ImageName.prototype.preload = function (callback){
   var self = this;
+  var process = 0;
+  var loadingG = self.s.group();
+  var bar = loadingG.path("M-50,0L50,0").attr({
+    "fill-opacity": "0",
+    "stroke-opacity": "1",
+    "stroke-width": "10",
+    "stroke": "#A8A2A5",
+    "stroke-linecap": "round",
+    "stroke-dasharray": "100px",
+    "stroke-dashoffset": "100px",
+    "transform": "t180,300s3"
+  });
+  var loadingText = loadingG.text(150,250,"0%").attr({"font-size": "20"});
+  var log = function (){
+    
+    process = process + 1;
+  };
   function preloadArray(names, images){
     for (var i=0;i<names.length;i++){
       images[i] = new Image();
       images[i].src = "/images/thumbs/" + names[i];
+      $(images[i]).one("load",log);
     }
   }
-  preloadArray(this.N11, this.P11);
-  preloadArray(this.N12, this.P12);
-  preloadArray(this.N21, this.P21);
-  preloadArray(this.N22, this.P22);
-  preloadArray(this.N31, this.P31);
+  
+  preloadArray(this.N0, this.P0);
+  setTimeout(function (){
+    preloadArray(self.N11, self.P11);
+  }, 400);
+
+  setTimeout(function (){
+    preloadArray(self.N12, self.P12);
+  }, 800);
+  setTimeout(function (){
+    preloadArray(self.N21, self.P21);
+  }, 1200);
+
+  setTimeout(function (){
+    preloadArray(self.N22, self.P22);
+  }, 1600);
+  setTimeout(function (){
+    preloadArray(self.N31, self.P31);
+  }, 2000);
   preloadArray(this.N32, this.P32);
+  function check(){
+    if (process < 68){
+      var percent = Math.round(100.0*process/68).toString();
+      loadingText.attr({"text": percent + "%"});
+      bar.animate({
+        "stroke-dashoffset": (100 - percent) + "px"
+      },500,mina.easeinout);
+      setTimeout(check, 500);
+    }else{
+      loadingText.attr({"text": "100%"});
+      bar.animate({
+        "stroke-dashoffset": "0px"
+      },500,mina.easeinout, function (){
+        remove(loadingG).done(callback);
+      });
+    }
+  }
+  check();
 };
 
 Animator.prototype.drawPhoto = function (images, x, y) {
@@ -162,6 +227,9 @@ Animator.prototype.drawPhoto = function (images, x, y) {
       });
       var dragG = g.group(image);
       var matrixString = dragG.transform();
+      dragG.touchmove(function(event) {
+        event.preventDefault();
+      });
       image.animate({
         "opacity": 1
       }, 1000);
@@ -206,7 +274,6 @@ function remove(element) {
   if (!element) {
     dfd.resolve();
   } else {
-    var currentY = element.getBBox().y;
     element.animate({
       //"y": currentY - 1000,
       "opacity": 0
@@ -227,7 +294,7 @@ function showArrowNextPage(snap, time, callback) {
     "fill-opacity": "0",
     "stroke-opacity": "1",
     "stroke-width": "5",
-    "stroke": "black",
+    "stroke": "#A8A2A5",
     "stroke-dasharray": "126px",
     "stroke-dashoffset": "126px"
   });
@@ -261,22 +328,29 @@ function showArrowNextPage(snap, time, callback) {
 }
 
 Animator.prototype.page1 = function () {
+  function getP0Image(index){
+    if (index === 0)
+      return ImageToBase64(self.imageName.P0[index], "image/jpeg");
+    else
+      return ImageToBase64(self.imageName.P0[index], "image/png");
+  }
   var self = this;
-  var image = self.s.image("images/cover.jpg", 0, 144, 360, 415);
-  var textG = self.s.group().attr({ "opacity": 0 });
-  textG.image("images/ring.png", 50, 0, 262, 268);
-  textG.image("images/name1.png", 135, 100, 90, 20);
-  textG.image("images/name2.png", 135, 160, 90, 20);
-  textG.image("images/diamond.png", 170, 130, 20, 20);
-  textG.image("images/time.png", 85, 300, 200, 20);
+  var image = self.s.image(getP0Image(0), 0, 144, 360, 415);
+  var textG = self.s.group(image).attr({ "opacity": 0 });
+  textG.image(getP0Image(1), 170, 130, 20, 20);
+  textG.image(getP0Image(2), 85, 330, 200, 20);
+  textG.image(getP0Image(3), 135, 100, 90, 20);
+  textG.image(getP0Image(4), 135, 160, 90, 20);
 
-  textG.image("images/line.png", 85, 330, 200, 20);
-  textG.image("images/place.png", 55, 360, 250, 50);
+  textG.image(getP0Image(5), 55, 360, 250, 50);
+  textG.image(getP0Image(6), 50, 0, 262, 268);
+  textG.image(getP0Image(7), 85, 300, 200, 20);
   textG.animate({
     "opacity": 1
   }, 1000, function () {
     var text = self.s.text(200, 560, '点这里是我们的故事').attr({
       "font-size": "20",
+      "color": "#A8A2A5",
       "text-anchor": "middle"
     });
     showArrowNextPage(self.s, 10, function () {
@@ -291,6 +365,7 @@ Animator.prototype.page1 = function () {
         );
     });
   });
+
 };
 
 Animator.prototype.page2 = function () {
@@ -331,14 +406,15 @@ Animator.prototype.page2 = function () {
 
 
 
-  Snap.load("/images/continentsLow.svg", function (fragment) {
+  Snap.load("/images/continentsHigh.svg", function (fragment) {
     showArrowNextPage(self.s, 6500, function () {
       self.page3();
     });
 
     mapG.append(fragment.select("#g8").attr({ transform: "t-600,-50" }));
+    var matrix = mapG.transform();
     mapG.animate({
-      transform: "t-1000,-200s10,10",
+      "transform": matrix+"t-220,-100s10",
       "opacity": 1
     }, 2000, showRole);
   });
@@ -374,7 +450,7 @@ Animator.prototype.page3 = function () {
     "y": 470
   }, 1000, mina.backin);
 
-  showArrowNextPage(self.s, 2000, function () {
+  showArrowNextPage(self.s, 5000, function () {
     self.page4();
   });
 
@@ -445,7 +521,7 @@ Animator.prototype.page5 = function () {
 
   var textG = self.s.group().attr({ "id": "text" });
   var name = QueryString.name || "";
-  var text = textG.text({ text: ["今天，我们要结婚了", "", name,"点此关注我们的婚礼公共号"] })
+  var text = textG.text({ text: ["今天，我们要结婚了", "亲爱的"+name+",","我们恭候您的大驾光临！","","点此关注我们的婚礼公共号"] })
     .attr({ fill: "blue", fontSize: "16px", "opacity": 0 });
 
   text.selectAll("tspan").forEach(function (tspan, i) {
