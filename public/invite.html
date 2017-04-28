@@ -8,9 +8,17 @@
   <script src="/modules/jquery/jquery.js"></script>
   <script src="/modules/snapsvg/snap.svg.js"></script>
   <script src="/javascripts/tugua.js"></script>
-  <audio id="background_audio" autoplay="autoplay">
-    <source src="/bgm.mp3" type="audio/mpeg" />
-  </audio>
+  <audio id="Jaudio" class="media-audio" src="/bgm.mp3" preload loop="loop"></audio>
+  <script>
+    function audioAutoPlay(id){
+      var audio = document.getElementById(id);
+      audio.play();
+      document.addEventListener("WeixinJSBridgeReady", function () {
+        audio.play();
+      }, false);
+    }
+    audioAutoPlay('Jaudio');
+  </script>
 </head>
 
 <body>

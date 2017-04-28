@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
   var name = QueryString.name || "";
   if (name)
   document.title = "婚礼请帖 to" + name;
